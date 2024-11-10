@@ -39,13 +39,13 @@ jobs:
         working-directory: ./load_balancer
 
       - name: Terraform Apply (Load Balancer)
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/master'
         run: terraform apply -auto-approve
         working-directory: ./load_balancer
 
      # Commit terraform.tfstate back to the repository
       - name: Commit Terraform State File
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/master'
         run: |
           git add ./load_balancer/terraform.tfstate
           git commit -m "Save terraform.tfstate for load_balancer"
@@ -70,7 +70,7 @@ jobs:
         working-directory: ./frontend
 
       - name: Terraform Apply (Frontend)
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/master'
         run: terraform apply -auto-approve
         working-directory: ./frontend
 
@@ -84,6 +84,6 @@ jobs:
         working-directory: ./backend
 
       - name: Terraform Apply (Backend)
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/master'
         run: terraform apply -auto-approve
         working-directory: ./backend

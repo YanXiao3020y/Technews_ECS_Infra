@@ -33,7 +33,7 @@ jobs:
         run: terraform init
         working-directory: ./load_balancer
 
-            - name: Terraform Plan (Load Balancer)
+      - name: Terraform Plan (Load Balancer)
         run: terraform plan
         working-directory: ./load_balancer
 

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:  # This allows manual triggering of the workflow
 
 jobs:
-  terraform:
+  terraform-apply:
     name: Apply Terraform configuration
     runs-on: ubuntu-latest
 
@@ -29,13 +29,15 @@ jobs:
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}  
           aws-region: ${{ env.AWS_REGION }}  
 
-      # # Checks that all Terraform configuration files adhere to a canonical format
-      # - name: Terraform Format
-      #   run: terraform fmt -check
-    
+     
       # Run Terraform in ./load_balancer directory
       - name: Initialize Terraform (Load Balancer)
         run: terraform init
+        working-directory: ./load_balancer
+
+      # Checks that all Terraform configuration files adhere to a canonical format
+      - name: Terraform Format (Load Balancer)
+        run: terraform fmt -check
         working-directory: ./load_balancer
 
       - name: Terraform Plan (Load Balancer)
@@ -47,39 +49,38 @@ jobs:
         run: terraform apply  -input=false -auto-approve
         working-directory: ./load_balancer
 
-    #  # Commit terraform.tfstate back to the repository
-    #   - name: Commit Terraform State File
-    #     if: github.ref == 'refs/heads/master'
-    #     run: |
-    #       git add ./load_balancer/terraform.tfstate
-    #       git commit -m "Save terraform.tfstate for load_balancer"
-    #       git push
-    #     working-directory: ./load_balancer
+      # Run Terraform in ./frontend directory
+      - name: Initialize Terraform (Frontend)
+        run: terraform init
+        working-directory: ./frontend
 
-      # # Run Terraform in ./frontend directory
-      # - name: Initialize Terraform (Frontend)
-      #   run: terraform init
-      #   working-directory: ./frontend
+      - name: Terraform Format (Frontend)
+        run: terraform fmt -check
+        working-directory: ./frontend
 
-      # - name: Terraform Plan (Frontend)
-      #   run: terraform plan
-      #   working-directory: ./frontend
+      - name: Terraform Plan (Frontend)
+        run: terraform plan
+        working-directory: ./frontend
 
-      # - name: Terraform Apply (Frontend)
-      #   if: github.ref == 'refs/heads/master'
-      #   run: terraform apply -auto-approve
-      #   working-directory: ./frontend
+      - name: Terraform Apply (Frontend)
+        if: github.ref == 'refs/heads/master'
+        run: terraform apply -auto-approve
+        working-directory: ./frontend
 
-      # # Run Terraform in ./backend directory
-      # - name: Initialize Terraform (Backend)
-      #   run: terraform init
-      #   working-directory: ./backend
+      # Run Terraform in ./backend directory
+      - name: Initialize Terraform (Backend)
+        run: terraform init
+        working-directory: ./backend
+      
+      - name: Terraform Format (Backend)
+        run: terraform fmt -check
+        working-directory: ./backend
 
-      # - name: Terraform Plan (Backend)
-      #   run: terraform plan
-      #   working-directory: ./backend
+      - name: Terraform Plan (Backend)
+        run: terraform plan
+        working-directory: ./backend
 
-      # - name: Terraform Apply (Backend)
-      #   if: github.ref == 'refs/heads/master'
-      #   run: terraform apply -auto-approve
-      #   working-directory: ./backend
+      - name: Terraform Apply (Backend)
+        if: github.ref == 'refs/heads/master'
+        run: terraform apply -auto-approve
+        working-directory: ./backend

@@ -4,14 +4,17 @@ on:
   workflow_dispatch:  # This allows manual triggering of the workflow
 
 jobs:
-  terraform:
-    name: Destroy Terraform configuration
+  terraform-destroy:
+    name: Destroy Terraform configurations
     runs-on: ubuntu-latest
-
-    env:   
+    env:
       AWS_REGION: ${{ secrets.AWS_REGION }}    # You can also store the region in a secret if needed
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_TECHNEWS_YAN }}  
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_TECHNEWS_YAN }}  
+
+    strategy:
+      matrix:
+        directory: ['./load_balancer', './frontend', './backend']  # Run for all directories in parallel
 
     steps:
       - name: Checkout code
@@ -29,57 +32,19 @@ jobs:
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}  
           aws-region: ${{ env.AWS_REGION }}  
 
-      # # Checks that all Terraform configuration files adhere to a canonical format
-      # - name: Terraform Format
-      #   run: terraform fmt -check
-     
-      # Run Terraform in ./load_balancer directory
-      - name: Initialize Terraform (Load Balancer)
+      - name: Initialize Terraform
         run: terraform init
-        working-directory: ./load_balancer
+        working-directory: ${{ matrix.directory }}
 
-      - name: Terraform Plan (Load Balancer)
-        run: terraform plan  -input=false
-        working-directory: ./load_balancer
+      - name: Terraform Format 
+        run: terraform fmt -check
+        working-directory: ${{ matrix.directory }}
 
-      - name: Terraform Destroy (Load Balancer)
+      - name: Terraform Plan
+        run: terraform plan -input=false
+        working-directory: ${{ matrix.directory }}
+
+      - name: Terraform Destroy
         if: github.ref == 'refs/heads/master'
-        run: terraform destroy  -input=false -auto-approve
-        working-directory: ./load_balancer
-
-    #  # Commit terraform.tfstate back to the repository
-    #   - name: Commit Terraform State File
-    #     if: github.ref == 'refs/heads/master'
-    #     run: |
-    #       git add ./load_balancer/terraform.tfstate
-    #       git commit -m "Save terraform.tfstate for load_balancer"
-    #       git push
-    #     working-directory: ./load_balancer
-
-      # # Run Terraform in ./frontend directory
-      # - name: Initialize Terraform (Frontend)
-      #   run: terraform init
-      #   working-directory: ./frontend
-
-      # - name: Terraform Plan (Frontend)
-      #   run: terraform plan
-      #   working-directory: ./frontend
-
-      # - name: Terraform Apply (Frontend)
-      #   if: github.ref == 'refs/heads/master'
-      #   run: terraform apply -auto-approve
-      #   working-directory: ./frontend
-
-      # # Run Terraform in ./backend directory
-      # - name: Initialize Terraform (Backend)
-      #   run: terraform init
-      #   working-directory: ./backend
-
-      # - name: Terraform Plan (Backend)
-      #   run: terraform plan
-      #   working-directory: ./backend
-
-      # - name: Terraform Apply (Backend)
-      #   if: github.ref == 'refs/heads/master'
-      #   run: terraform apply -auto-approve
-      #   working-directory: ./backend
+        run: terraform destroy -input=false -auto-approve
+        working-directory: ${{ matrix.directory }}

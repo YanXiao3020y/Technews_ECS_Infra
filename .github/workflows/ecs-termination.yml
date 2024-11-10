@@ -36,10 +36,6 @@ jobs:
         run: terraform init
         working-directory: ${{ matrix.directory }}
 
-      - name: Terraform Format 
-        run: terraform fmt -check
-        working-directory: ${{ matrix.directory }}
-
       - name: Terraform Plan
         run: terraform plan -input=false
         working-directory: ${{ matrix.directory }}

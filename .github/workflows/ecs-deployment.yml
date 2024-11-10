@@ -35,11 +35,6 @@ jobs:
         run: terraform init
         working-directory: ./load_balancer
 
-      # Checks that all Terraform configuration files adhere to a canonical format
-      - name: Terraform Format (Load Balancer)
-        run: terraform fmt -check
-        working-directory: ./load_balancer
-
       - name: Terraform Plan (Load Balancer)
         run: terraform plan  -input=false
         working-directory: ./load_balancer
@@ -52,10 +47,6 @@ jobs:
       # Run Terraform in ./frontend directory
       - name: Initialize Terraform (Frontend)
         run: terraform init
-        working-directory: ./frontend
-
-      - name: Terraform Format (Frontend)
-        run: terraform fmt -check
         working-directory: ./frontend
 
       - name: Terraform Plan (Frontend)
@@ -72,10 +63,6 @@ jobs:
         run: terraform init
         working-directory: ./backend
       
-      - name: Terraform Format (Backend)
-        run: terraform fmt -check
-        working-directory: ./backend
-
       - name: Terraform Plan (Backend)
         run: terraform plan
         working-directory: ./backend

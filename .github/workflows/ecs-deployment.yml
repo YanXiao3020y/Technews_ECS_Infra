@@ -52,30 +52,30 @@ jobs:
     #       git push
     #     working-directory: ./load_balancer
 
-      # Run Terraform in ./frontend directory
-      - name: Initialize Terraform (Frontend)
-        run: terraform init
-        working-directory: ./frontend
+      # # Run Terraform in ./frontend directory
+      # - name: Initialize Terraform (Frontend)
+      #   run: terraform init
+      #   working-directory: ./frontend
 
-      - name: Terraform Plan (Frontend)
-        run: terraform plan
-        working-directory: ./frontend
+      # - name: Terraform Plan (Frontend)
+      #   run: terraform plan
+      #   working-directory: ./frontend
 
-      - name: Terraform Apply (Frontend)
-        if: github.ref == 'refs/heads/master'
-        run: terraform apply -auto-approve
-        working-directory: ./frontend
+      # - name: Terraform Apply (Frontend)
+      #   if: github.ref == 'refs/heads/master'
+      #   run: terraform apply -auto-approve
+      #   working-directory: ./frontend
 
-      # Run Terraform in ./backend directory
-      - name: Initialize Terraform (Backend)
-        run: terraform init
-        working-directory: ./backend
+      # # Run Terraform in ./backend directory
+      # - name: Initialize Terraform (Backend)
+      #   run: terraform init
+      #   working-directory: ./backend
 
-      - name: Terraform Plan (Backend)
-        run: terraform plan
-        working-directory: ./backend
+      # - name: Terraform Plan (Backend)
+      #   run: terraform plan
+      #   working-directory: ./backend
 
-      - name: Terraform Apply (Backend)
-        if: github.ref == 'refs/heads/master'
-        run: terraform apply -auto-approve
-        working-directory: ./backend
+      # - name: Terraform Apply (Backend)
+      #   if: github.ref == 'refs/heads/master'
+      #   run: terraform apply -auto-approve
+      #   working-directory: ./backend

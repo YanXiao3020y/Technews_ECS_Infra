@@ -1,4 +1,4 @@
-name: Destroy ECS
+name: Destroy Backend
 
 on:
   workflow_dispatch:  # This allows manual triggering of the workflow

@@ -2,12 +2,31 @@ provider "aws" {
   region = "us-east-2"
 }
 
+# # S3 Bucket for Terraform state storage
+# resource "aws_s3_bucket" "terraform_state" {
+#   bucket = "my-terraform-state-bucket-technews_1"
+#   acl    = "private"
+#   versioning {
+#     enabled = false
+#   }
+# }
+
+# Configure Terraform backend to use S3 and DynamoDB for state management
+terraform {
+  backend "s3" {
+    bucket = "my-terraform-state-bucket-technews"
+    key            = "loadbalancer/terraform.tfstate"
+    region         = "us-east-2"
+    encrypt        = true
+  }
+}
+
 resource "aws_ecs_cluster" "main" {
   name = "main-cluster"
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecs_task_execution_role_R"
+  name = "ecs_task_execution_role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",

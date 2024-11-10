@@ -3,9 +3,18 @@ provider "aws" {
 }
 
 data "terraform_remote_state" "load_balancer" {
-  backend = "local"
-  config = { path = "../load_balancer/terraform.tfstate" }
+  backend = "s3"
+  config = {
+    bucket = "my-terraform-state-bucket-technews"
+    key    = "loadbalancer/terraform.tfstate"
+    region = "us-east-2"
+  }
 }
+
+# data "terraform_remote_state" "load_balancer" {
+#   backend = "local"
+#   config = { path = "../load_balancer/terraform.tfstate" }
+# }
 
 resource "aws_cloudwatch_log_group" "frontend_logs" {
   name              = "/ecs/technews-platform-frontend"

@@ -3,9 +3,18 @@ provider "aws" {
 }
 
 data "terraform_remote_state" "load_balancer" {
-  backend = "local"
-  config = { path = "../load_balancer/terraform.tfstate" }
+  backend = "s3"
+  config = {
+    bucket = "my-terraform-state-bucket-technews"
+    key    = "loadbalancer/terraform.tfstate"
+    region = "us-east-2"
+  }
 }
+
+# data "terraform_remote_state" "load_balancer" {
+#   backend = "local"
+#   config = { path = "../load_balancer/terraform.tfstate" }
+# }
 
 resource "aws_cloudwatch_log_group" "ecs_logs" {
   name              = "/ecs/technews-platform-api"
@@ -61,4 +70,12 @@ resource "aws_ecs_service" "main" {
     container_name   = "technews-platform-api"
     container_port   = 5001
   }
+
+  lifecycle {
+    prevent_destroy = false  # Allow immediate destruction without waiting
+  }
+
+  # Remove the load balancer from the ECS service creation/destroy sequence
+  depends_on = []  # No dependency on load balancer here
+
 }

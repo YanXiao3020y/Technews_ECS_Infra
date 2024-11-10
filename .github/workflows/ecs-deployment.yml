@@ -43,22 +43,14 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: ./load_balancer
 
-     # Commit terraform.tfstate back to the repository
-      - name: Commit Terraform State File
-        if: github.ref == 'refs/heads/master'
-        run: |
-          git add ./load_balancer/terraform.tfstate
-          git commit -m "Save terraform.tfstate for load_balancer"
-          git push
-        working-directory: ./load_balancer
-
-       # Wait for 5 minutes with a countdown timer
-      - name: Wait for Load Balancer setup to stabilize
-        run: |
-          for i in {1..5}; do
-            echo "Waiting... $((i * 60)) seconds have passed out of 300 seconds (5 minutes)."
-            sleep 60
-          done
+    #  # Commit terraform.tfstate back to the repository
+    #   - name: Commit Terraform State File
+    #     if: github.ref == 'refs/heads/master'
+    #     run: |
+    #       git add ./load_balancer/terraform.tfstate
+    #       git commit -m "Save terraform.tfstate for load_balancer"
+    #       git push
+    #     working-directory: ./load_balancer
 
       # Run Terraform in ./frontend directory
       - name: Initialize Terraform (Frontend)

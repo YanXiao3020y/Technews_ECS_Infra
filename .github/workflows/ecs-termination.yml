@@ -32,9 +32,12 @@ jobs:
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}  
           aws-region: ${{ env.AWS_REGION }}  
 
-      - name: Wait before starting
-        run: sleep $(( matrix.index * 30 ))  # Introduce a delay of 30 seconds per index
+      # - name: Wait before starting
+      #   run: sleep $(( matrix.index * 30 ))  # Introduce a delay of 30 seconds per index
         
+      - name: Wait before starting
+        run: sleep $(( ${{ matrix.index }} * 30 ))  # Introduce a delay of 30 seconds per index
+
       - name: Initialize Terraform
         run: terraform init
         working-directory: ${{ matrix.directory }}

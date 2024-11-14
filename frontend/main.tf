@@ -11,6 +11,24 @@ data "terraform_remote_state" "load_balancer" {
   }
 }
 
+terraform {
+  backend "s3" {
+    bucket = "my-terraform-state-bucket-technews"
+    key            = "frontend/terraform.tfstate"
+    region         = "us-east-2"
+    encrypt        = true
+  }
+}
+
+data "terraform_remote_state" "backend" {
+  backend = "s3"
+  config = {
+    bucket = "my-terraform-state-bucket-technews"
+    key    = "backend/terraform.tfstate"
+    region = "us-east-2"
+  }
+}
+
 # data "terraform_remote_state" "load_balancer" {
 #   backend = "local"
 #   config = { path = "../load_balancer/terraform.tfstate" }
@@ -50,7 +68,8 @@ resource "aws_ecs_task_definition" "frontend_task" {
 
 resource "aws_ecs_service" "frontend" {
   name            = "frontend-service"
-  cluster         = data.terraform_remote_state.load_balancer.outputs.ecs_cluster_id
+  # cluster         = data.terraform_remote_state.load_balancer.outputs.ecs_cluster_id
+  cluster         = data.terraform_remote_state.backend.outputs.ecs_cluster_id
 
   task_definition = aws_ecs_task_definition.frontend_task.arn
   launch_type     = "FARGATE"

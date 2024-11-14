@@ -11,6 +11,15 @@ data "terraform_remote_state" "load_balancer" {
   }
 }
 
+terraform {
+  backend "s3" {
+    bucket = "my-terraform-state-bucket-technews"
+    key            = "backend/terraform.tfstate"
+    region         = "us-east-2"
+    encrypt        = true
+  }
+}
+
 # data "terraform_remote_state" "load_balancer" {
 #   backend = "local"
 #   config = { path = "../load_balancer/terraform.tfstate" }
@@ -19,6 +28,10 @@ data "terraform_remote_state" "load_balancer" {
 resource "aws_cloudwatch_log_group" "ecs_logs" {
   name              = "/ecs/technews-platform-api"
   retention_in_days = 30
+}
+
+resource "aws_ecs_cluster" "main" {
+  name = "main-cluster"
 }
 
 resource "aws_ecs_task_definition" "main" {
@@ -53,7 +66,8 @@ resource "aws_ecs_task_definition" "main" {
 
 resource "aws_ecs_service" "main" {
   name            = "main-service"
-  cluster         = data.terraform_remote_state.load_balancer.outputs.ecs_cluster_id
+  # cluster         = data.terraform_remote_state.load_balancer.outputs.ecs_cluster_id
+  cluster         = aws_ecs_cluster.main.id
 
   task_definition = aws_ecs_task_definition.main.arn
   launch_type     = "FARGATE"
@@ -78,4 +92,9 @@ resource "aws_ecs_service" "main" {
   # Remove the load balancer from the ECS service creation/destroy sequence
   depends_on = []  # No dependency on load balancer here
 
+}
+
+
+output "ecs_cluster_id" {
+  value = aws_ecs_cluster.main.id
 }

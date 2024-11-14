@@ -21,9 +21,9 @@ terraform {
   }
 }
 
-resource "aws_ecs_cluster" "main" {
-  name = "main-cluster"
-}
+# resource "aws_ecs_cluster" "main" {
+#   name = "main-cluster"
+# }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
   name = "ecs_task_execution_role"
@@ -197,9 +197,9 @@ output "frontend_tg_arn" {
   value = aws_lb_target_group.frontend_tg.arn
 }
 
-output "ecs_cluster_id" {
-  value = aws_ecs_cluster.main.id
-}
+# output "ecs_cluster_id" {
+#   value = aws_ecs_cluster.main.id
+# }
 
 output "ecs_task_execution_role_arn" {
   value = aws_iam_role.ecs_task_execution_role.arn

@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        directory: ['./load_balancer', './frontend', './backend']  # Run for all directories in parallel
+        directory: ['./frontend', './backend', './load_balancer']  # Run for all directories in parallel
 
     steps:
       - name: Checkout code
